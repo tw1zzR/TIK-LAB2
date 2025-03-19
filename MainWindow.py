@@ -1,8 +1,7 @@
 import numpy as np
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout, QMainWindow
-
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QMainWindow
 from methods import compute_entropy
 
 
