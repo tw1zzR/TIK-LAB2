@@ -1,27 +1,18 @@
 import numpy as np
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QMainWindow
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QMainWindow, QLineEdit
 from methods import compute_entropy
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.P_A = np.array([0.1, 0.12, 0.12, 0.15, 0.1, 0.15])
-        self.P_B = np.array([0.25, 0.3, 0.01, 0.25, 0.025, 0.008, 0.0016, 0.0016])
-        self.T_counts = np.array([256, 128, 256, 128, 132, 100, 200])
-        self.P_joint = np.array([
-            [0, 0.3, 0],
-            [0.1, 0, 0.4],
-            [0.1, 0, 0]
-        ])
 
-        # Else
-        self.P_A_label = QLabel("P_A =", self)
-        self.P_B_label = QLabel("P_B =", self)
-        self.T_counts_label = QLabel("T_counts =", self)
-        self.P_joint_label = QLabel("P_joint =", self)
+        self.P_A_edit = QLineEdit("0.1, 0.12, 0.12, 0.15, 0.1, 0.15")
+        self.P_B_edit = QLineEdit("0.25, 0.3, 0.01, 0.25, 0.025, 0.008, 0.0016, 0.0016")
+        self.T_counts_edit = QLineEdit("256, 128, 256, 128, 132, 100, 200")
+        self.P_joint_edit = QLineEdit("0,0.3,0;0.1,0,0.4;0.1,0,0")
 
         self.H_A_label = QLabel("", self)
         self.H_B_label = QLabel("", self)
@@ -30,7 +21,6 @@ class MainWindow(QMainWindow):
         self.H_A_given_B_label = QLabel("", self)
         self.H_B_given_A_label = QLabel("", self)
 
-        # Push Buttons and their connections
         self.calculate_H_A_B_pushbutton = QPushButton("Calculate #1", self)
         self.calculate_H_T_pushbutton = QPushButton("Calculate #2", self)
         self.calculate_H_AB_BA_pushbutton = QPushButton("Calculate #3", self)
@@ -43,41 +33,26 @@ class MainWindow(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('TIK Lab 2')
-        self.setGeometry(1000, 200, 600, 500)
+        self.setGeometry(1000, 200, 600, 600)
         self.setWindowIcon(QIcon('LAB2_icon.png'))
 
-        formatted_P_A = np.array2string(self.P_A, precision=3, separator=', ')
-        formatted_P_B = np.array2string(self.P_B, precision=3, separator=', ')
-        formatted_T_counts = np.array2string(self.T_counts, precision=3, separator=', ')
-
-        self.P_A_label.setText(f"P_A = {formatted_P_A}")
-        self.P_B_label.setText(f"P_B = {formatted_P_B}")
-        self.T_counts_label.setText(f"T_counts = {formatted_T_counts}")
-
-        self.P_A_label.setFixedHeight(50)
-        self.P_B_label.setFixedHeight(50)
-        self.T_counts_label.setFixedHeight(50)
-        self.P_joint_label.setFixedHeight(100)
-        self.H_A_label.setFixedHeight(50)
-        self.H_B_label.setFixedHeight(50)
-        self.H_T_label.setFixedHeight(50)
-        self.H_AB_label.setFixedHeight(50)
-        self.H_A_given_B_label.setFixedHeight(50)
-        self.H_B_given_A_label.setFixedHeight(50)
-
-        # Layout
         qvbox = QVBoxLayout()
         qvbox.setSpacing(20)
 
-        qvbox.addWidget(self.P_A_label)
-        qvbox.addWidget(self.P_B_label)
+        qvbox.addWidget(QLabel("P_A:"))
+        qvbox.addWidget(self.P_A_edit)
+        qvbox.addWidget(QLabel("P_B:"))
+        qvbox.addWidget(self.P_B_edit)
+        qvbox.addWidget(QLabel("T_counts:"))
+        qvbox.addWidget(self.T_counts_edit)
+        qvbox.addWidget(QLabel("P_joint (через ; строки, внутри через ,):"))
+        qvbox.addWidget(self.P_joint_edit)
+
         qvbox.addWidget(self.H_A_label)
         qvbox.addWidget(self.H_B_label)
         qvbox.addWidget(self.calculate_H_A_B_pushbutton)
-        qvbox.addWidget(self.T_counts_label)
         qvbox.addWidget(self.H_T_label)
         qvbox.addWidget(self.calculate_H_T_pushbutton)
-        qvbox.addWidget(self.P_joint_label)
         qvbox.addWidget(self.H_AB_label)
         qvbox.addWidget(self.H_A_given_B_label)
         qvbox.addWidget(self.H_B_given_A_label)
@@ -86,22 +61,6 @@ class MainWindow(QMainWindow):
         central_widget = QWidget()
         central_widget.setLayout(qvbox)
         self.setCentralWidget(central_widget)
-
-        for label in [self.P_A_label, self.H_A_label, self.P_B_label, self.H_B_label, self.T_counts_label, self.H_T_label,
-                      self.P_joint_label, self.H_AB_label, self.H_A_given_B_label, self.H_B_given_A_label]:
-            label.setAlignment(Qt.AlignCenter)
-
-        # Set objects name
-        self.P_A_label.setObjectName("P_A_label")
-        self.P_B_label.setObjectName("P_B_label")
-        self.T_counts_label.setObjectName("T_counts_label")
-        self.P_joint_label.setObjectName("P_joint_label")
-        self.H_A_label.setObjectName("H_A_label")
-        self.H_B_label.setObjectName("H_B_label")
-        self.H_T_label.setObjectName("H_T_label")
-        self.H_AB_label.setObjectName("H_AB_label")
-        self.H_A_given_B_label.setObjectName("H_A_given_B_label")
-        self.H_B_given_A_label.setObjectName("H_B_given_A_label")
 
         self.setStyleSheet("""
             QMainWindow {
@@ -114,7 +73,6 @@ class MainWindow(QMainWindow):
                 font-weight: bold;
                 color: rgb(0,0,0);
             }
-            }
             QPushButton {
                 background-color: rgb(174, 201, 212);
                 font-family: Helvetica;
@@ -124,47 +82,52 @@ class MainWindow(QMainWindow):
                 border-color: rgb(84, 129, 148);
                 color: rgb(0,0,0);
                 padding-left: 10px;
-                width: 120px; 
+                width: 120px;
                 height: 60px;
             }
-            QLabel#P_A_label, QLabel#P_B_label, QLabel#T_counts_label, QLabel#P_joint_label {
-                background-color: rgb(227, 218, 195);
+            QLineEdit {
+                background-color: rgb(240, 248, 250);
                 font-family: Helvetica;
-                font-size: 18px;
-                font-weight: bold;
-                border: 3px solid;
-                border-color: rgb(163, 144, 98);
+                font-size: 16px;
+                border: 2px solid rgb(84, 129, 148);
+                border-radius: 4px;
+                padding: 6px;
                 color: rgb(0,0,0);
-                padding-left: 10px;
-            }
-            QLabel#H_A_label, QLabel#H_B_label, QLabel#H_T_label, 
-            QLabel#H_AB_label, QLabel#H_A_given_B_label, QLabel#H_B_given_A_label {
-                background-color: rgb(201, 227, 195);
-                font-family: Helvetica;
-                font-size: 18px;
-                font-weight: bold;
-                border: 3px solid;
-                border-color: rgb(90, 122, 82);
-                color: rgb(0,0,0);
-                padding-left: 10px;
             }
         """)
 
         self.show()
 
+    def get_array_from_edit(self, edit, dtype=float):
+        text = edit.text()
+        parts = text.replace(" ", "").split(",")
+        return np.array([dtype(p) for p in parts])
+
+    def get_matrix_from_edit(self, edit):
+        lines = edit.text().split(";")
+        matrix = []
+        for line in lines:
+            row = [float(x) for x in line.replace(" ", "").split(",")]
+            matrix.append(row)
+        return np.array(matrix)
+
     def compute_H_A_and_H_B(self):
-        H_A = compute_entropy(self.P_A)
-        H_B = compute_entropy(self.P_B)
+        P_A = self.get_array_from_edit(self.P_A_edit)
+        P_B = self.get_array_from_edit(self.P_B_edit)
+        H_A = compute_entropy(P_A)
+        H_B = compute_entropy(P_B)
         return H_A, H_B
 
     def compute_H_T(self):
-        P_T = self.T_counts / self.T_counts.sum()
+        T_counts = self.get_array_from_edit(self.T_counts_edit)
+        P_T = T_counts / T_counts.sum()
         return compute_entropy(P_T)
 
     def compute_joint_entropy(self):
-        P_A_marginal = np.sum(self.P_joint, axis=1)
-        P_B_marginal = np.sum(self.P_joint, axis=0)
-        H_AB = compute_entropy(self.P_joint[self.P_joint > 0])
+        P_joint = self.get_matrix_from_edit(self.P_joint_edit)
+        P_A_marginal = np.sum(P_joint, axis=1)
+        P_B_marginal = np.sum(P_joint, axis=0)
+        H_AB = compute_entropy(P_joint[P_joint > 0])
         H_A_given_B = H_AB - compute_entropy(P_B_marginal[P_B_marginal > 0])
         H_B_given_A = H_AB - compute_entropy(P_A_marginal[P_A_marginal > 0])
         return H_AB, H_A_given_B, H_B_given_A
